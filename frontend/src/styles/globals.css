@@ -1,0 +1,102 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom styles */
+@layer base {
+  html {
+    font-family: system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    color: white;
+    background-color: #2563eb;
+    transition: colors 200ms;
+  }
+
+  .btn-primary:hover {
+    background-color: #1d4ed8;
+  }
+
+  .btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    color: #374151;
+    background-color: white;
+    transition: colors 200ms;
+  }
+
+  .btn-outline:hover {
+    background-color: #f9fafb;
+  }
+
+  .btn-outline:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  .gradient-text {
+    background: linear-gradient(to right, #2563eb, #1e40af);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .text-primary-600 {
+    color: #2563eb;
+  }
+
+  .text-primary-700 {
+    color: #1d4ed8;
+  }
+
+  .text-primary-800 {
+    color: #1e40af;
+  }
+
+  .bg-primary-50 {
+    background-color: #eff6ff;
+  }
+
+  .bg-primary-600 {
+    background-color: #2563eb;
+  }
+
+  .bg-primary-700 {
+    background-color: #1d4ed8;
+  }
+
+  .border-primary-500 {
+    border-color: #3b82f6;
+  }
+
+  .border-primary-600 {
+    border-color: #2563eb;
+  }
+
+  .ring-primary-500 {
+    --tw-ring-color: #3b82f6;
+  }
+}

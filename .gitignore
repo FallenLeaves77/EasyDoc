@@ -1,0 +1,355 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Production builds
+/frontend/.next/
+/frontend/out/
+/frontend/build/
+/backend/dist/
+/backend/build/
+
+# Environment variables (含敏感信息，不上传)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 保留示例环境文件（这些要上传）
+!.env.example
+!**/.env.example
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# 上传的文件（用户数据，不上传）
+/backend/uploads/*
+!/backend/uploads/.gitkeep
+
+# 用户数据和敏感文件
+**/user-data/
+**/private/
+**/sensitive/
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache files
+.cache/
+*.cache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+
+# Prettier cache
+.prettiercache
+
+# Package manager lock files (keep package-lock.json but ignore yarn.lock if using npm)
+# yarn.lock
+
+# Local development files
+.local
+
+# API密钥和敏感配置文件（绝对不上传）
+**/config/secrets.json
+**/config/keys.json
+**/*-key.json
+**/*-secret.json
+**/credentials.json
+**/*-credentials.*
+**/auth-config.json
+**/.env.production
+**/.env.staging
+
+# Windows specific
+*.lnk
+
+# macOS specific
+.AppleDouble
+.LSOverride
+
+# Linux specific
+*~
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Test files
+test-results/
+coverage/
+
+# Documentation build
+docs/_build/
+
+# Python (if any Python scripts are added)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Java (if any Java files are added)
+*.class
+*.jar
+*.war
+*.ear
+
+# Temporary upload files
+uploads/temp/
+temp/
+
+# Development tools
+.history/
+.vscode/settings.json
+
+# Package manager files
+package-lock.json.backup
+yarn.lock.backup
+
+# Build artifacts
+*.map
+*.min.js
+*.min.css
+
+# Local configuration
+config.local.js
+config.local.json
+
+# Performance monitoring
+.clinic/
+.0x/
+
+# Webpack
+.webpack/
+
+# Storybook
+storybook-static/
+
+# Chromatic
+chromatic.log
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify
+
+# Local Netlify folder
+.netlify/
+
+# SvelteKit
+.svelte-kit
+
+# Astro
+.astro
+
+# Remix
+.remix
+
+# Solid
+.solid
+
+# Qwik
+.qwik
+
+# Vite
+.vite
+
+# Rollup
+.rollup.cache
+
+# Parcel
+.parcel-cache
+
+# Rush
+common/temp/
+
+# Nx
+.nx/cache
+
+# Turborepo
+.turbo
+
+# Lerna
+lerna-debug.log*
+
+# Changesets
+.changeset
+
+# Husky
+.husky/_
+
+# Lint staged
+.lintstagedrc*
+
+# Commitizen
+.cz-config.js
+
+# Semantic release
+.semantic-release/
+
+# Auto-generated files
+CHANGELOG.md.backup
+
+# ========================================
+# 🔒 安全相关 - 绝对不要上传的文件
+# ========================================
+
+# SSH密钥
+*.ssh/
+id_rsa*
+id_ed25519*
+known_hosts
+
+# SSL证书
+*.crt
+*.cert
+*.ca-bundle
+*.p7b
+*.p7s
+*.spc
+
+# 数据库备份和导出
+*.sql
+*.dump
+*.backup
+*.bak
+
+# 配置文件中的敏感信息
+config.production.json
+config.staging.json
+secrets.yaml
+secrets.yml
+
+# 第三方服务配置
+firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# 测试和调试文件
+debug.log
+error.log
+access.log
+*.trace
+
+# 临时和测试数据
+test-data/
+sample-data/
+mock-data/
+fixtures/
+
+# ========================================
+# ✅ 确保这些重要文件被包含在Git中
+# ========================================
+
+# 重要：确保这些文件被包含
+!README.md
+!LICENSE
+!package.json
+!tsconfig.json
+!next.config.js
+!tailwind.config.js
+!.eslintrc.json
+!.prettierrc
+!.gitignore
+!DEVELOPMENT.md

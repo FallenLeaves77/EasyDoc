@@ -1,0 +1,98 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+    
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: Lint backend
+      run: |
+        cd backend
+        npm run lint --if-present
+    
+    - name: Lint frontend
+      run: |
+        cd frontend
+        npm run lint --if-present
+    
+    - name: Type check backend
+      run: |
+        cd backend
+        npm run type-check --if-present
+    
+    - name: Type check frontend
+      run: |
+        cd frontend
+        npm run type-check --if-present
+    
+    - name: Build backend
+      run: |
+        cd backend
+        npm run build --if-present
+    
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build --if-present
+    
+    - name: Run backend tests
+      run: |
+        cd backend
+        npm test --if-present
+    
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm test --if-present
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        cd backend && npm ci
+        cd ../frontend && npm ci
+    
+    - name: Run security audit
+      run: |
+        cd backend && npm audit --audit-level=moderate
+        cd ../frontend && npm audit --audit-level=moderate
