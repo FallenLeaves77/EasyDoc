@@ -91,9 +91,16 @@ const FiguresPanel: React.FC<FiguresPanelProps> = ({ document }) => {
               {/* Figure Info */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className={`badge ${getFigureTypeColor(figure.type)}`}>
-                    {figure.type}
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className={`badge ${getFigureTypeColor(figure.type)}`}>
+                      {figure.type}
+                    </span>
+                    {figure.metadata?.isReference && (
+                      <span className="badge bg-yellow-100 text-yellow-800">
+                        引用
+                      </span>
+                    )}
+                  </div>
                   <span className="text-xs text-gray-500">
                     第 {figure.position.page} 页
                   </span>

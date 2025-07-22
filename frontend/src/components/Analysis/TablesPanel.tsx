@@ -41,13 +41,13 @@ const TablesPanel: React.FC<TablesPanelProps> = ({ document }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <tbody className="bg-white divide-y divide-gray-200">
             {previewData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
+              <tr key={rowIndex} className={rowIndex === 0 && table.structure.hasHeader ? 'bg-gray-50' : ''}>
                 {row.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
                     className={clsx(
                       'px-3 py-2 text-xs text-gray-900 border-r border-gray-200',
-                      cell.isHeader && 'bg-gray-50 font-medium'
+                      (cell.isHeader || (rowIndex === 0 && table.structure.hasHeader)) && 'font-medium bg-gray-50'
                     )}
                   >
                     <div className="max-w-32 truncate" title={cell.value}>

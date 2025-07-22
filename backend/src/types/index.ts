@@ -28,8 +28,9 @@ export interface IParseResult {
   errCode?: string;
   errMessage?: string;
   data?: {
-    taskId: string;
-    task_status: 'PENDING' | 'SUCCESS' | 'ERROR' | 'PROGRESSING';
+    task_id?: string;  // API返回的任务ID
+    taskId?: string;   // 兼容性字段
+    task_status?: 'PENDING' | 'SUCCESS' | 'ERROR' | 'PROGRESSING';
     task_result?: any;
   };
 }
@@ -153,6 +154,9 @@ export interface IFigureData {
     extractedText?: string;
     colors?: string[];
     objects?: string[];
+    fileType?: string;
+    size?: number;
+    isReference?: boolean;
   };
 }
 

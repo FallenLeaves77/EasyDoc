@@ -14,8 +14,26 @@ import { getContentBlockTypeDisplayName } from '../../utils';
 const safeDisplayText = (text: string): string => {
   if (!text) return '';
 
+  let cleanText = text.trim();
+
+  // 处理可能的HTML内容，转换为纯文本
+  if (cleanText.includes('<') && cleanText.includes('>')) {
+    // 简单的HTML到文本转换，避免HTML乱码
+    cleanText = cleanText
+      .replace(/<[^>]*>/g, ' ') // 移除HTML标签
+      .replace(/&nbsp;/g, ' ') // 替换HTML实体
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      .replace(/\s+/g, ' ') // 合并多个空格
+      .trim();
+  }
+
   // 移除可能的控制字符和无效字符
-  let cleanText = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  cleanText = cleanText.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
 
   // 处理可能的编码问题
   try {
@@ -30,17 +48,22 @@ const safeDisplayText = (text: string): string => {
       }
     }
 
-    // 检测其他常见乱码模式
+    // 检测更多常见乱码模式
     const commonGarbledPatterns = [
       /[锘縚]/g, // UTF-8 BOM 乱码
       /[\u00C0-\u00FF]{3,}/g, // 连续的扩展ASCII字符
       /[鐪嬩笉鎳俒]/g, // 常见的GBK->UTF8乱码
+      /[Ã¤Â¸Â­Ã¦Â–Â‡]/g, // UTF-8双重编码乱码
+      /[ä¸­æ–‡]/g, // 另一种常见的UTF-8乱码
+      /[涓枃]/g, // GBK编码显示为UTF-8的乱码
     ];
 
     let hasGarbledContent = false;
+    let detectedPattern = null;
     for (const pattern of commonGarbledPatterns) {
       if (pattern.test(cleanText)) {
         hasGarbledContent = true;
+        detectedPattern = pattern;
         console.warn('Detected garbled content pattern:', pattern);
         break;
       }
@@ -50,21 +73,35 @@ const safeDisplayText = (text: string): string => {
       // 尝试基本的乱码修复
       cleanText = cleanText
         .replace(/锘�/g, '') // 移除UTF-8 BOM乱码
-        .replace(/[\u00C0-\u00FF]{3,}/g, '[编码异常]'); // 替换明显的乱码段
+        .replace(/[\u00C0-\u00FF]{3,}/g, '[编码异常]') // 替换明显的乱码段
+        .replace(/[Ã¤Â¸Â­Ã¦Â–Â‡]/g, '中文') // 修复常见的UTF-8双重编码
+        .replace(/[ä¸­æ–‡]/g, '中文') // 修复另一种UTF-8乱码
+        .replace(/[涓枃]/g, '中文'); // 修复GBK乱码
+
+      console.log('Applied encoding fix for pattern:', detectedPattern);
     }
 
-    // 确保文本是有效的UTF-8
+    // 确保文本是有效的UTF-8并规范化
     cleanText = cleanText.normalize('NFC');
 
+    // 移除控制字符但保留换行符和制表符
+    cleanText = cleanText.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
     // 如果文本过短且可能是乱码，显示提示
-    if (cleanText.length < 10 && /[^\u4e00-\u9fa5\u0020-\u007E]/.test(cleanText)) {
-      return '[内容可能存在编码问题]';
+    if (cleanText.length < 10 && /[^\u4e00-\u9fa5\u0020-\u007E\u3000-\u303F\uFF00-\uFFEF]/.test(cleanText)) {
+      return '[内容可能存在编码问题，建议重新上传文档]';
+    }
+
+    // 检查是否还有大量未识别字符
+    const unrecognizedRatio = (cleanText.match(/[^\u4e00-\u9fa5\u0020-\u007E\u3000-\u303F\uFF00-\uFFEF\s]/g) || []).length / cleanText.length;
+    if (unrecognizedRatio > 0.3) {
+      return '[文档包含大量无法识别的字符，可能存在编码问题]';
     }
 
     return cleanText;
   } catch (error) {
     console.error('Error processing text content:', error);
-    return '[文本处理错误]'; // 返回友好的错误提示
+    return '[文本处理错误，请检查文档格式]'; // 返回友好的错误提示
   }
 };
 
@@ -139,14 +176,41 @@ const ContentBlocksPanel: React.FC<ContentBlocksPanelProps> = ({ document }) => 
 
 
 
+  // 检查文档状态
+  if (document.status === 'failed') {
+    const errorMessage = document.parseResult?.errMessage || document.errorMessage || '文档解析失败';
+    return (
+      <div className="text-center py-12">
+        <DocumentTextIcon className="mx-auto h-12 w-12 text-red-400" />
+        <h3 className="mt-2 text-sm font-medium text-red-900">文档解析失败</h3>
+        <p className="mt-1 text-sm text-red-600">
+          {errorMessage}
+        </p>
+        <div className="mt-4 text-xs text-gray-500">
+          <p>建议解决方案：</p>
+          <ul className="mt-2 text-left max-w-md mx-auto space-y-1">
+            <li>• 检查网络连接是否稳定</li>
+            <li>• 尝试上传较小的文件（建议小于10MB）</li>
+            <li>• 确保文件格式正确（PDF、DOCX、DOC、TXT、RTF）</li>
+            <li>• 稍后重试</li>
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
   if (contentBlocks.length === 0) {
     return (
       <div className="text-center py-12">
         <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
         <h3 className="mt-2 text-sm font-medium text-gray-900">未找到内容块</h3>
         <p className="mt-1 text-sm text-gray-500">
-          此文档没有识别到任何内容块。
+          此文档没有识别到任何内容块。可能是文档格式不支持或内容解析失败。
         </p>
+        <div className="mt-4 text-xs text-gray-400">
+          <p>支持的文档格式：PDF、DOCX、DOC、TXT、RTF</p>
+          <p>如果问题持续存在，请尝试重新上传文档</p>
+        </div>
       </div>
     );
   }

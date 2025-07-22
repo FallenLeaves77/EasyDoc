@@ -90,7 +90,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🌐 CORS origin: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
+      console.log(`🌐 CORS origins: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}, http://localhost:3002, http://localhost:3001`);
       console.log(`🔍 Health Check: http://localhost:${PORT}/api/health`);
     });
   } catch (error) {

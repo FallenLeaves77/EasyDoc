@@ -170,6 +170,9 @@ export interface IFigureData {
     extractedText?: string;
     colors?: string[];
     objects?: string[];
+    fileType?: string;
+    size?: number;
+    isReference?: boolean;
   };
 }
 

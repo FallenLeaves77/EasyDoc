@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
+import path from 'path';
 import { IParseResult } from '../types';
 
 export class EasyDocService {
@@ -60,6 +61,15 @@ export class EasyDocService {
     try {
       const { mode = 'lite', startPage, endPage } = options;
 
+      // 检查文件大小，给出警告
+      const stats = fs.statSync(filePath);
+      const fileSizeInMB = stats.size / (1024 * 1024);
+      if (fileSizeInMB > 10) {
+        console.warn(`⚠️ Large file detected: ${fileSizeInMB.toFixed(2)}MB. This may cause timeout.`);
+      }
+
+      console.log(`📤 Uploading file: ${path.basename(filePath)} (${fileSizeInMB.toFixed(2)}MB) in ${mode} mode`);
+
       // Create form data
       const formData = new FormData();
       formData.append('file', fs.createReadStream(filePath));
@@ -79,9 +89,11 @@ export class EasyDocService {
           headers: {
             ...formData.getHeaders(),
           },
+          timeout: 300000, // 5分钟超时
         }
       );
 
+      console.log(`✅ Document parsed successfully. Response size: ${JSON.stringify(response.data).length} chars`);
       return response.data;
     } catch (error: any) {
       console.error('❌ Error parsing document:', error);
@@ -148,6 +160,7 @@ export class EasyDocService {
 
       if (status === 'SUCCESS') {
         console.log('✅ Parse task completed successfully');
+        console.log('📊 Parse result data structure:', JSON.stringify(result.data?.task_result, null, 2));
         return result;
       }
 

@@ -11,20 +11,22 @@ import {
   DocumentIcon,
   ClockIcon,
   CloudArrowUpIcon,
-  PlayIcon
+  PlayIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 import apiService from '../services/api';
 import { DocumentStatus } from '../types';
-import { formatFileSize, getStatusDisplayName } from '../utils';
+import { formatFileSize, getStatusDisplayName, safeDisplayFileName } from '../utils';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import ContentBlocksPanel from '../components/Analysis/ContentBlocksPanel';
 import StructurePanel from '../components/Analysis/StructurePanel';
 import TablesPanel from '../components/Analysis/TablesPanel';
 import FiguresPanel from '../components/Analysis/FiguresPanel';
+import MarkdownPanel from '../components/Analysis/MarkdownPanel';
 
-type TabType = 'blocks' | 'structure' | 'tables' | 'figures';
+type TabType = 'blocks' | 'structure' | 'tables' | 'figures' | 'markdown';
 
 const DocumentView: React.FC = () => {
   const router = useRouter();
@@ -123,6 +125,13 @@ const DocumentView: React.FC = () => {
       icon: PhotoIcon,
       count: document?.figures?.length || 0,
       description: '视觉内容分析',
+    },
+    {
+      id: 'markdown' as TabType,
+      name: 'Markdown',
+      icon: DocumentTextIcon,
+      count: document?.contentBlocks?.length || 0,
+      description: 'Markdown格式预览',
     },
   ];
 
@@ -225,6 +234,8 @@ const DocumentView: React.FC = () => {
         return <TablesPanel document={document} />;
       case 'figures':
         return <FiguresPanel document={document} />;
+      case 'markdown':
+        return <MarkdownPanel document={document} />;
       default:
         return (
           <div className="text-center py-12">
@@ -254,7 +265,7 @@ const DocumentView: React.FC = () => {
 
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{document.originalName}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 word-break">{safeDisplayFileName(document.originalName)}</h1>
             <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
               <span>📄 {formatFileSize(document.fileSize)}</span>
               <span>📅 {new Date(document.uploadedAt).toLocaleDateString()}</span>

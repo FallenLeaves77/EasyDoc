@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 
 import { IDocument, DocumentStatus } from '../../types';
-import { getStatusDisplayName, formatFileSize, formatDate } from '../../utils';
+import { getStatusDisplayName, formatFileSize, formatDate, safeDisplayFileName } from '../../utils';
 
 interface DocumentCardProps {
   document: IDocument;
@@ -88,27 +88,29 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete }) => {
     <div className="card hover:shadow-medium transition-all duration-200 group">
       <div className="card-body">
         {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl">{getFileTypeIcon(document.mimeType)}</span>
-            <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-medium text-gray-900 truncate">
-                {document.originalName}
-              </h3>
-              <p className="text-xs text-gray-500">
-                {formatFileSize(document.fileSize)}
-              </p>
+        <div className="mb-3">
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex items-start space-x-2 flex-1 min-w-0 pr-2">
+              <span className="text-2xl flex-shrink-0">{getFileTypeIcon(document.mimeType)}</span>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-medium text-gray-900 filename-display">
+                  {document.originalName}
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formatFileSize(document.fileSize)}
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Status Badge */}
-          <span className={clsx(
-            'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
-            getStatusColor(document.status)
-          )}>
-            {getStatusIcon(document.status)}
-            <span className="ml-1">{getStatusDisplayName(document.status)}</span>
-          </span>
+            {/* Status Badge */}
+            <span className={clsx(
+              'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium flex-shrink-0',
+              getStatusColor(document.status)
+            )}>
+              {getStatusIcon(document.status)}
+              <span className="ml-1">{getStatusDisplayName(document.status)}</span>
+            </span>
+          </div>
         </div>
 
         {/* Content Preview */}

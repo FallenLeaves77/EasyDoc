@@ -29,10 +29,13 @@ export class DocumentService {
       });
 
       const savedDocument = await document.save();
-      
+
       return {
         success: true,
-        data: savedDocument.toObject(),
+        data: {
+          ...savedDocument.toObject(),
+          _id: savedDocument._id?.toString() || '',
+        } as IDocument,
         meta: {
           timestamp: new Date().toISOString(),
           requestId: savedDocument._id?.toString() || '',
@@ -88,7 +91,7 @@ export class DocumentService {
       if (!parseResult.success || !parseResult.data?.taskId) {
         document.status = DocumentStatus.FAILED;
         await document.save();
-        
+
         return {
           success: false,
           error: {
@@ -158,7 +161,7 @@ export class DocumentService {
         data: {
           taskId: parseTask.taskId,
           status: parseTask.status,
-          document: parseTask.document,
+          documentId: parseTask.documentId,
           result: parseTask.result,
           error: parseTask.error,
           createdAt: parseTask.createdAt,
@@ -214,7 +217,10 @@ export class DocumentService {
       return {
         success: true,
         data: {
-          documents,
+          documents: documents.map(doc => ({
+            ...doc,
+            _id: doc._id?.toString() || '',
+          })) as IDocument[],
           total,
           page,
           limit,
@@ -256,7 +262,10 @@ export class DocumentService {
 
       return {
         success: true,
-        data: document,
+        data: {
+          ...document,
+          _id: document._id?.toString() || '',
+        } as IDocument,
         meta: {
           timestamp: new Date().toISOString(),
           requestId: documentId,
@@ -333,7 +342,7 @@ export class DocumentService {
   private async pollParseResultInBackground(documentId: string, taskId: string): Promise<void> {
     try {
       console.log(`🔄 Starting background polling for task: ${taskId}`);
-      
+
       const result = await this.easyDocService.pollParseResult(taskId, {
         maxAttempts: 60,
         intervalMs: 5000,
@@ -351,14 +360,14 @@ export class DocumentService {
         // Parse completed successfully
         document.status = DocumentStatus.COMPLETED;
         document.parseResult = result;
-        
+
         parseTask.status = 'SUCCESS';
         parseTask.result = result.data.task_result;
 
         // Analyze content and extract structured data
         if (result.data.task_result) {
           const analysisResult = await this.contentAnalysisService.analyzeContent(result.data.task_result);
-          
+
           if (analysisResult.success) {
             document.contentBlocks = analysisResult.data?.contentBlocks;
             document.structureNodes = analysisResult.data?.structureNodes;
@@ -379,7 +388,7 @@ export class DocumentService {
       console.log(`✅ Background polling completed for task: ${taskId}`);
     } catch (error) {
       console.error('❌ Error in background polling:', error);
-      
+
       // Update status to failed
       try {
         await DocumentModel.findByIdAndUpdate(documentId, { status: DocumentStatus.FAILED });
